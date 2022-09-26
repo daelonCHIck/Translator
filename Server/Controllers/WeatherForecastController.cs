@@ -19,12 +19,65 @@ namespace Переводчик.Server.Controllers
 
         private readonly ILogger<WeatherForecastController> logger;
 
+       
+
         public WeatherForecastController(ILogger<WeatherForecastController> logger)
         {
             this.logger = logger;
         }
+      
+        [HttpPost]
+        public IActionResult Post()
 
-        [HttpGet]
+
+        {
+            using (TranslatorDBContext db = new TranslatorDBContext()) 
+            {
+            User user7 = new User { UserId = 7, Login = "ab@mail.ru", Password = "4848", NickName = "LALeu" };
+            User user8 = new User { UserId = 8, Login = "be@mail.ru", Password = "255AbC47", NickName = "Manny" };
+            User user9 = new User { UserId = 9, Login = "vf658@mail.ru", Password = "1552", NickName = "Vaflya" };
+                db.User.Add(user7);
+                db.User.Add(user8);
+                db.User.Add(user9);
+
+            db.SaveChanges();
+            }
+            return Ok();
+          
+        }
+
+
+        [HttpDelete]
+        public IActionResult Delete()
+
+        {
+            string resultText = "";
+
+            using (TranslatorDBContext db = new TranslatorDBContext())
+            {
+                // получаем первый объект
+                User user = db.User.FirstOrDefault();
+                if (user != null)
+                {
+                    //удаляем объект
+                    db.User.Remove(user);
+                    db.SaveChanges();
+                }
+                // выводим данные после обновления
+                Console.WriteLine("\nДанные после удаления:");
+                var users = db.User.ToList();
+                foreach (User u in users)
+                {
+                    resultText += $"{u.UserId}.{u.Login} - {u.Password} - {u.NickName}\n";
+                }
+            }
+            
+            return Ok();
+
+            return resultText;
+        }
+
+            [HttpGet]
         public string Get()
         {
             var rng = new Random();
@@ -49,7 +102,8 @@ namespace Переводчик.Server.Controllers
                 Console.WriteLine("Данные после добавления:");
                 foreach (User u in users)
                 {
-                    Console.WriteLine($"{u.UserId}.{u.Login} - {u.Password} - {u.NickName}");
+
+                    resultText+= $"{u.UserId}.{u.Login} - {u.Password} - {u.NickName}\n";
                 }
             }
 
