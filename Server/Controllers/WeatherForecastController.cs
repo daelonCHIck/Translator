@@ -25,16 +25,37 @@ namespace Переводчик.Server.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public string Get()
         {
             var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+
+
+            using (TranslatorDBContext db = new TranslatorDBContext())
             {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+                User user1 = new User { UserId = 6, Login = "a@mail.ru", Password = "1314", NickName = "Man" };
+
+                // Добавление
+                //db.User.Add(user1);
+
+                db.SaveChanges();
+            }
+
+            string resultText = "";
+
+            using (TranslatorDBContext db = new TranslatorDBContext())
+            {
+                // получаем объекты из бд и выводим на консоль
+                var users = db.User.ToList();
+                Console.WriteLine("Данные после добавления:");
+                foreach (User u in users)
+                {
+                    Console.WriteLine($"{u.UserId}.{u.Login} - {u.Password} - {u.NickName}");
+                }
+            }
+
+
+            return resultText;
         }
+
     }
 }
