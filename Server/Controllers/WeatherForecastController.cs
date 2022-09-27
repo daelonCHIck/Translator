@@ -27,7 +27,7 @@ namespace Переводчик.Server.Controllers
         }
       
         [HttpPost]
-        public IActionResult Post()
+        public IActionResult Post(User newUser)
 
 
         {
@@ -48,7 +48,7 @@ namespace Переводчик.Server.Controllers
 
 
         [HttpDelete]
-        public IActionResult Delete()
+        public IActionResult Delete(int UserId)
 
         {
             string resultText = "";
@@ -56,7 +56,7 @@ namespace Переводчик.Server.Controllers
             using (TranslatorDBContext db = new TranslatorDBContext())
             {
                 // получаем первый объект
-                User user = db.User.FirstOrDefault();
+                User user = db.User.FirstOrDefault(x => x.UserId == 9);
                 if (user != null)
                 {
                     //удаляем объект
@@ -74,11 +74,11 @@ namespace Переводчик.Server.Controllers
             
             return Ok();
 
-            return resultText;
+            
         }
 
             [HttpGet]
-        public string Get()
+        public string Get(User currentUser)
         {
             var rng = new Random();
 
@@ -110,6 +110,36 @@ namespace Переводчик.Server.Controllers
 
             return resultText;
         }
+
+
+        [HttpPut]
+        public IActionResult Put(User alterUser)
+
+        {
+            string resultText = "";
+
+            using (TranslatorDBContext db = new TranslatorDBContext())
+            {
+                User user = db.User.FirstOrDefault(x => x.UserId == 7);
+                if (user != null)
+                {
+                    user.NickName = "Lushi";
+                    user.Login = "cppp@gmail.com";
+
+                    db.User.Update(user);
+                    db.SaveChanges();
+
+                    var users = db.User.ToList();
+                    foreach (User u in users)
+                    {
+                        resultText += $"{u.UserId}.{u.Login} - {u.Password} - {u.NickName}\n";
+                    }
+                }
+            }
+
+            return Ok();
+        }
+
 
     }
 }
